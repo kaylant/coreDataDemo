@@ -20,27 +20,30 @@ class ViewController: UIViewController {
         // create context, a handler for us to access data through
         let context: NSManagedObjectContext = appDel.managedObjectContext
         
-        // create new user which will allow us to insert a new user into our users entity
-        var newUser = NSEntityDescription.insertNewObjectForEntityForName("Users", inManagedObjectContext: context)
-        
-        // set values of attributes for a particular user
-        newUser.setValue("Grett", forKey: "username")
-        
-        newUser.setValue("pizzaForDinner", forKey: "password")
-        
-        // save data to database
-        do {
-        
-            try context.save()
-        
-        } catch {
-        
-            print("There was a problem")
-        
-        }
+        // CREATE a new user which will allow us to insert a new user into our users entity
+//        var newUser = NSEntityDescription.insertNewObjectForEntityForName("Users", inManagedObjectContext: context)
+//        
+//        // set values of attributes for a particular user
+//        newUser.setValue("Grett", forKey: "username")
+//        
+//        newUser.setValue("pizzaForDinner", forKey: "password")
+//        
+//        // save data to database
+//        do {
+//        
+//            try context.save()
+//        
+//        } catch {
+//        
+//            print("There was a problem")
+//        
+//        }
         
         // retrieves data from database
         let request = NSFetchRequest(entityName: "Users")
+        
+        // SEARCH the database according to the username being equal to something, and that something is Gretta
+        request.predicate = NSPredicate(format: "username = %@", "Grett")
         
         // to see data and its values
         request.returnsObjectsAsFaults = false
@@ -55,9 +58,27 @@ class ViewController: UIViewController {
             
                 // then loop through array of data
                 for result in results as! [NSManagedObject] {
+                    
+                    // to DELETE from db
+                    context.deleteObject(result)
+                    
+                    // this would update username of "Grett" to Ralphie
+                    // result.setValue("Ralphie", forKey: "username")
+                    
+                    do {
+                        // saves new data
+                        try context.save()
+                    
+                    } catch {
+                    
+                    }
                 
-                    print(result.valueForKey("username")!)
-                    print(result.valueForKey("password")!)
+                    if let username = result.valueForKey("username") as? String {
+                
+                        print(result.valueForKey("username")!)
+//                      print(result.valueForKey("password")!)
+                        
+                    }
                 
                 }
             
